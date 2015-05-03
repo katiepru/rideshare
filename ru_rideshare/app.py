@@ -107,3 +107,8 @@ def edit_driver():
         return render_template("edit_driver.html", form=form, msg="Success!")
     else:
         return render_template("edit_driver.html", form=form)
+
+
+@app.route("/view_requests")
+def view_requests():
+    return render_template("view_requests.html")

@@ -142,3 +142,40 @@ class RideClient(object):
         for i in curs:
             l.append(i)
         return l
+
+
+    def find_requests_in_x_mins(self, x):
+        """Finds all requests with pickup times within x minutes from now.
+
+        :Parameters:
+            - `x` : number of minutes from now to search within
+        """
+
+        curs = self._conn.cursor(oursql.DictCursor)
+        curs.execute('SELECT id FROM `requests` WHERE dtime BETWEEN ' \
+                     'NOW() AND DATE_ADD(NOW(), INTERVAL ? MINUTE)', (x,))
+        l = []
+        for i in curs:
+            l.append(i)
+        return l
+
+
+    def find_requests_in_mins_miles(self, lat, lon, miles, mins):
+        """Finds all requests within x miles of the given location
+
+        :Parameters:
+            - `lat` : latitude coordinate of given location
+            - `lon` : longitude coordinate of given location
+            - `miles` : number of miles to search within
+            - `mins` : number of minutes from now to search within
+        """
+
+        curs = self._conn.cursor(oursql.DictCursor)
+        curs.execute('SELECT id FROM `requests` WHERE dtime BETWEEN ' \
+                     'NOW() AND DATE_ADD(NOW(), INTERVAL ? MINUTE) ' \
+                     'AND harvesine(?, ?, pickup_lat, pickup_long)<?',
+                     (mins, lat, lon, miles))
+        l = []
+        for i in curs:
+            l.append(i)
+        return l

@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_auth import Auth
 
 from ru_rideshare.user import User, get_user
+from ru_rideshare.util import set_logger, get_db_client
 
 # Create application
 app = Flask(__name__)
@@ -20,7 +21,7 @@ login_manager.init_app(app)
 login_manager.login_view = '/login'
 
 # Allows us to use the function in our templates
-app.jinja_env.globals.update(formattime=formattime)
+#app.jinja_env.globals.update(formattime=formattime)
 
 
 @login_manager.user_loader
@@ -75,19 +76,11 @@ def logout():
 def request_ride():
     form = RequestRideForm(request.form)
     if request.method == "POST" and form.validate():
-        # Enter request into db
-        pass
+        client = get_db_client(app, g)
+        client.insert_request(current_user.id, form.dtime.data,
+                (form.pickup_lat.data, form.pickup_long.data),
+                (form.dest_lat.data, form.dest_long.data), form.seats.data,
+                form.car.data)
+        return render_template("request_ride.html", form=form, msg="Success!")
     else:
-        render_template("request_ride.html", form=form)
-
-
-@app.route("/select_ride/<ride_id>")
-def select_ride(ride_id=None):
-    client = get_db_client(app, g)
-
-    if ride_id is None:
-        rides = client.get_requested_rides()
-        return render_template("select_ride.html", rides=rides)
-
-    else:
-        pass
+        return render_template("request_ride.html", form=form)

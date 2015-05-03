@@ -2,7 +2,7 @@ from flask_login import UserMixin, current_user
 from flask_auth import LoginForm
 from wtforms import TextField, PasswordField, validators
 
-from ru_rideshare.client import Client
+from ru_rideshare.client import RideClient
 
 class User(UserMixin):
     """A User object used for logging in."""

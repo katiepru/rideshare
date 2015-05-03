@@ -84,3 +84,26 @@ def request_ride():
         return render_template("request_ride.html", form=form, msg="Success!")
     else:
         return render_template("request_ride.html", form=form)
+
+
+@app.route("/add_driver", methods=["GET", "POST"])
+def add_driver():
+    form = AddDriverForm(request.form)
+    if request.method == "POST" and form.validate():
+        client = get_db_client(app, g)
+        client.insert_driver(current_user.id, form.name.data, form.car.data,
+                             form.seats.data)
+        return render_template("add_driver.html", form=form, msg="Success!")
+    else:
+        return render_template("add_driver.html", form=form)
+
+
+@app.route("/edit_driver", methods=["GET", "POST"])
+def edit_driver():
+    form = EditDriverForm(request.form)
+    if request.method == "POST" and form.validate():
+        client = get_db_client(app, g)
+        client.insert_driver(current_user.id, form.car.data, form.seats.data)
+        return render_template("edit_driver.html", form=form, msg="Success!")
+    else:
+        return render_template("edit_driver.html", form=form)

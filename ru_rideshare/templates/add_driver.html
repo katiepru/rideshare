@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="links-box col-xs-12 col-sm-8 col-sm-offset-1">
+	{% if errors %}
+	<div class="rideshare-messages">
+		Uh oh:
+		<ul>
+		{% for error in errors %}
+			{% for suberror in errors[error] %}
+				<li> {{ suberror }} </li>
+			{% endfor %}
+		{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	<article class="link-group clearfix">
+		<form method="POST" action="{{ url_for('request_ride') }}" name="request_form" class="add-request">
+            {% for field in form %}
+                <tr>
+                    <th>{{ field.label }}</th>
+                    <td>{{ field }}</td>
+                </tr>
+            {% endfor %}
+		</form>
+	</article>
+</div>
+{% endblock %}

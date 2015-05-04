@@ -3,7 +3,8 @@
 Forms used for the application.
 """
 
-from wtforms import Form, TextField, PasswordField, RadioField, validators
+from wtforms import Form, TextField, PasswordField, DateTimeField, validators
+from wtforms import IntegerField, DecimalField, SelectField
 from flask_auth import LoginForm
 
 class RequestForm(Form):

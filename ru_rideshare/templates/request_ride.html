@@ -14,17 +14,33 @@
 	</div>
 	{% endif %}
 	<article class="link-group clearfix">
-		<form method="POST" action="{{ url_for('request_ride') }}" name="request_form" class="add-request">
-            {% for field in form %}
-                {{ field.label }}<br>
-                {% if field.description %}
-                    {{ field.description }}<br>
-                    {% endif %}
-                {{ field }}<br>
-            {% endfor %}
-            <br>
-            <input class='btn btn-default' type="submit" value="Submit" /><br />
-		</form>
+            <div class="col-md-6">
+		        <form method="POST" action="{{ url_for('request_ride') }}" name="request_form" class="add-request">
+                    {% for field in form %}
+                        {{ field.label }}<br>
+                        {% if field.description %}
+                            {{ field.description }}<br>
+                            {% endif %}
+                        {{ field }}<br>
+                    {% endfor %}
+                    <br>
+                    <input class='btn btn-default' type="submit" value="Submit" /><br />
+		        </form>
+            </div>
+            <div style="padding-top:15%" class="col-md-6">
+                <div id='map-canvas' style="height: 300px"></div>
+            </div>
 	</article>
 </div>
+<script type="text/javascript">
+    function initialize() {
+        var mapOptions = {
+            center: { lat: 40.498818, lng: -74.441862},
+            zoom: 12
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+</script>
 {% endblock %}

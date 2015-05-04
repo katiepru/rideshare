@@ -7,9 +7,10 @@ from wtforms import Form, TextField, PasswordField, DateTimeField, validators
 from wtforms import IntegerField, DecimalField, SelectField
 from flask_auth import LoginForm
 
-class RequestForm(Form):
-    """A WTForm for creating requests"""
-    dtime = DateTimeField("Pickup Date and Time", format="%Y-%m-%d %H:%M:%S",
+class RequestRideForm(Form):
+    """A WTForm for creating requests for rides"""
+    dtime = DateTimeField("Pickup Date and Time", format="%Y-%m-%d %H:%M",
+                          description="Format: YYYY-MM-DD hh:mm",
                           validators=[validators.DataRequired("Please enter " \
                                       "a pickup time")])
     pickup_lat = DecimalField("Pickup Latitude", places=6,
@@ -26,6 +27,7 @@ class RequestForm(Form):
                 validators.NumberRange(1, 10)
             ])
     car = SelectField("Preferred type of car", choices=[
+              (None, 'No Preference'),
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),
@@ -43,26 +45,26 @@ class RULoginForm(LoginForm):
 class AddDriverForm(Form):
     """A WTForm for adding new drivers"""
     name = TextField("Name", validators=[validators.DataRequired()])
+    seats = IntegerField("Number of seats needed", validators=[
+                validators.DataRequired(),
+                validators.NumberRange(1, 10)
+            ])
     car = SelectField("Preferred type of car", choices=[
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),
               ('suv', 'SUV')
           ], validators=[validators.DataRequired()])
-    seats = IntegerField("Number of seats needed", validators=[
-                validators.DataRequired(),
-                validators.NumberRange(1, 10)
-            ])
 
 class EditDriverForm(Form):
     """A WTForm for editing existing drivers"""
+    seats = IntegerField("Number of seats needed", validators=[
+                validators.DataRequired(),
+                validators.NumberRange(1, 10)
+            ])
     car = SelectField("Preferred type of car", choices=[
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),
               ('suv', 'SUV')
           ], validators=[validators.DataRequired()])
-    seats = IntegerField("Number of seats needed", validators=[
-                validators.DataRequired(),
-                validators.NumberRange(1, 10)
-            ])

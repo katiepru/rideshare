@@ -3,13 +3,13 @@ from flask_auth import LoginForm
 from wtforms import TextField, PasswordField, validators
 
 from ru_rideshare.client import RideClient
+from ru_rideshare.util import get_db_client
 
 class User(UserMixin):
     """A User object used for logging in."""
     def __init__(self, netid):
         self.netid = netid
         self.id = netid
-        self.client = Client()
 
     def is_active(self):
         # return not self.client.is_blacklisted(self.netid)

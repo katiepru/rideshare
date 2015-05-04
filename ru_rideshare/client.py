@@ -26,6 +26,8 @@ class RideClient(object):
             - `db` (optional): the database to use; defaults to "rideshare"
         """
 
+        if port is None:
+            port = 3306
         self._conn = oursql.connect(host=host, user=user, passwd=passwd, port=port,
                                 db=db);
 

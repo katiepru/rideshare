@@ -1,0 +1,14 @@
+<div class="container">
+{% if current_user.netid %}
+    <div class="netID">
+        {{ current_user.netid }}
+    </div>
+	<div class="log-out">
+		<a href="{{ url_for('logout') }}">Log Out</a>
+	</div>
+{% else %}
+	<div class="log-out">
+		<a href="{{ url_for('login') }}">Log In</a>
+	</div>
+{% endif %}
+</div>

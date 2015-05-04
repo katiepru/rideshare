@@ -4,7 +4,7 @@ from flask_auth import Auth
 
 from ru_rideshare.user import User, get_user
 from ru_rideshare.util import set_logger, get_db_client
-from ru_rideshare.forms import RULoginForm, RequestForm, AddDriverForm
+from ru_rideshare.forms import RULoginForm, RequestRideForm, AddDriverForm
 from ru_rideshare.forms import EditDriverForm
 
 # Create application

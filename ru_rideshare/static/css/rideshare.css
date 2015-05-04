@@ -27,6 +27,12 @@ body {
     font-size: 18px;
 }
 
+.nav > li > a:hover,
+.nav > li > a:focus {
+        background-color: #be0020;
+        font-weight: bold;
+    }
+
 /*
 .search-bar .form-group {
     display: inline;

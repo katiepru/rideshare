@@ -16,11 +16,11 @@
 	<article class="link-group clearfix">
 		<form method="POST" action="{{ url_for('request_ride') }}" name="request_form" class="add-request">
             {% for field in form %}
-                <tr>
-                    <th>{{ field.label }}</th>
-                    <td>{{ field }}</td>
-                </tr>
+                {{ field.label }}<br>
+                {{ field }}<br>
             {% endfor %}
+            <br>
+            <input class='btn btn-default' type="submit" value="Submit" /><br />
 		</form>
 	</article>
 </div>

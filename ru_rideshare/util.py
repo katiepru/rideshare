@@ -16,6 +16,7 @@ def get_db_client(app, g):
   if not hasattr(g, "client"):
     g.client = RideClient(host=app.config["DB_HOST"],
                           port=app.config["DB_PORT"],
+                          user=app.config["DB_USER"],
                           passwd=app.config["DB_PASS"])
   return g.client
 

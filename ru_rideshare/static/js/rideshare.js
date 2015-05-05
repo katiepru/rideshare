@@ -2,7 +2,7 @@
 
 var map = null;
 var geocoder = null;
-var marker = null;
+markers = [null, null];
 
 function initialize() {
         var mapOptions = {
@@ -14,7 +14,10 @@ function initialize() {
     geocoder = new google.maps.Geocoder();
 }
 
-function showAddress(address) {
+function showAddress(address, ind, callback) {
+  if (!callback) {
+    callback = function(){};
+  }
   if (geocoder) {
     geocoder.geocode(
       {address: address},
@@ -24,13 +27,15 @@ function showAddress(address) {
         } else {
           latlng = {lat: points[0].geometry.location.lat(), lng: points[0].geometry.location.lng()}
           map.setCenter(latlng, 12);
-          marker = new google.maps.Marker({
+          markers[ind] = new google.maps.Marker({
               position: latlng,
               map: map,
               title: address,
               animation: google.maps.Animation.DROP,
               draggable: true
           });
+        }
+            callback();
         }
       }
     );

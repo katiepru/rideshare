@@ -77,8 +77,14 @@ def logout():
 @app.route("/request_ride", methods=["GET", "POST"])
 def request_ride():
     form = RequestRideForm(request.form)
+    if request.method == 'POST':
+        for field in form:
+            print(str(field.label) + ": " + str(field.data))
     if request.method == "POST" and form.validate():
+        print("IN HERE")
         client = get_db_client(app, g)
+        if form.car.data == 'None':
+            form.car.data = None
         client.insert_request(current_user.id, form.dtime.data,
                 (form.pickup_lat.data, form.pickup_long.data),
                 (form.dest_lat.data, form.dest_long.data), form.seats.data,

@@ -4,7 +4,7 @@ Forms used for the application.
 """
 
 from wtforms import Form, TextField, PasswordField, DateTimeField, validators
-from wtforms import IntegerField, DecimalField, SelectField
+from wtforms import IntegerField, DecimalField, SelectField, HiddenField
 from flask_auth import LoginForm
 
 class RequestRideForm(Form):
@@ -13,21 +13,25 @@ class RequestRideForm(Form):
                           description="Format: YYYY-MM-DD hh:mm",
                           validators=[validators.DataRequired("Please enter " \
                                       "a pickup time")])
-    pickup_lat = DecimalField("Pickup Latitude", places=6,
+    pickup_lat = HiddenField("Pickup Latitude",
                            validators=[validators.DataRequired()])
-    pickup_long = DecimalField("Pickup Longitude",
+    pickup_long = HiddenField("Pickup Longitude",
                            validators=[validators.DataRequired()])
 
-    dest_lat = DecimalField("Destination Latitude", places=6,
+    dest_lat = HiddenField("Destination Latitude",
                            validators=[validators.DataRequired()])
-    dest_long = DecimalField("Destination Longitude", places=6,
+    dest_long = HiddenField("Destination Longitude",
                            validators=[validators.DataRequired()])
+    pickup_addr = TextField("Pickup Address",
+                            validators=[validators.DataRequired()])
+    dest_addr= TextField("Destination Address",
+                         validators=[validators.DataRequired()])
     seats = IntegerField("Number of seats needed", validators=[
                 validators.DataRequired(),
                 validators.NumberRange(1, 10)
             ])
     car = SelectField("Preferred type of car", choices=[
-              (None, 'No Preference'),
+              ('None', 'No Preference'),
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),

@@ -23,6 +23,7 @@
      <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnKmSgCqUXWTCnCHl57enJuE6h5GCCtoI">
      </script>
+    <script src="{{ url_for('static', filename='js/rideshare.js') }}"></script>
   </head>
   <body>
   {% include "header.html" %}
@@ -42,6 +43,5 @@
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<!-- Latest compiled and minified JavaScript -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/rideshare.js') }}"></script>
   </body>
 </html>

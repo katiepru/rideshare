@@ -14,7 +14,7 @@
 	</div>
 	{% endif %}
 	<article class="link-group clearfix">
-		<form method="POST" action="{{ url_for('request_ride') }}" name="request_form" class="add-request">
+		<form method="POST" action="{{ url_for('add_driver') }}" name="request_form" class="add-request">
             {% for field in form %}
                 {{ field.label }}<br>
                 {{ field }}<br>

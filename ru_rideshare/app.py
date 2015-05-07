@@ -2,13 +2,13 @@ from flask import Flask, render_template, request, redirect, g
 from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_auth import Auth
 
+# Create application
+app = Flask(__name__)
+
 from ru_rideshare.user import User, get_user
 from ru_rideshare.util import set_logger, get_db_client
 from ru_rideshare.forms import RULoginForm, RequestRideForm, AddDriverForm
 from ru_rideshare.forms import EditDriverForm
-
-# Create application
-app = Flask(__name__)
 
 # Import settings in config.py
 app.config.from_pyfile("config.py", silent=True)
@@ -32,7 +32,9 @@ def load_user(userid):
     :Parameters:
     - `userid`: An id for the user (typically a NetID).
     """
-    return User(userid)
+    client = get_db_client(app, g)
+    d = client.is_driver(userid)
+    return User(userid, d)
 
 
 def render_login(**kwargs):
@@ -56,7 +58,7 @@ def login_success(user):
 @app.route("/")
 @login_required
 def index():
-    return "Hello!"
+    return str(current_user.driver)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -100,7 +102,8 @@ def add_driver():
     if request.method == "POST" and form.validate():
         client = get_db_client(app, g)
         client.insert_driver(current_user.id, form.name.data, form.car.data,
-                             form.seats.data)
+                             int(form.seats.data))
+        current_user.driver = True
         return render_template("add_driver.html", form=form, msg="Success!")
     else:
         return render_template("add_driver.html", form=form)

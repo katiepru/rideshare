@@ -42,6 +42,7 @@ class RideClient(object):
             - `seats: the numebr of seats the car has for passengers
         """
 
+        print("Inserting a driver")
         curs = self._conn.cursor(oursql.DictCursor)
         curs.execute('INSERT INTO `drivers` (netid, name, car_type, seats)' \
                      ' VALUES (?, ?, ?, ?)', (netid, name, car, seats))
@@ -59,6 +60,25 @@ class RideClient(object):
         curs = self._conn.cursor(oursql.DictCursor)
         curs.execute('UPDATE `drivers` SET car_type=?, seats=? WHERE netid=?',
                      (car, seats, netid))
+
+
+    def is_driver(self, netid):
+        """Checks is user is a driver.
+
+        :Parameters:
+            - `netid` : the official Rutgers NetId of the user
+
+        Returns True if user is in the drivera table, False otherwise.
+        """
+
+        curs = self._conn.cursor(oursql.DictCursor)
+        curs.execute('SELECT * FROM `drivers` WHERE netid=?', (netid,))
+
+        for result in curs:
+            #found a result
+            return True
+        return False
+
 
 
     def insert_request(self, rnetid, dtime, pickup, dest, seats, car):

@@ -35,8 +35,7 @@ function showAddress(address, ind, callback) {
               draggable: true
           });
         }
-            callback();
-        }
+        callback();
       }
     );
   }

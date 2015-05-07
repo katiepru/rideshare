@@ -49,11 +49,11 @@ class RULoginForm(LoginForm):
 class AddDriverForm(Form):
     """A WTForm for adding new drivers"""
     name = TextField("Name", validators=[validators.DataRequired()])
-    seats = IntegerField("Number of seats needed", validators=[
+    seats = IntegerField("Number of seats in vehicle", validators=[
                 validators.DataRequired(),
                 validators.NumberRange(1, 10)
             ])
-    car = SelectField("Preferred type of car", choices=[
+    car = SelectField("Type of car", choices=[
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),
@@ -62,11 +62,11 @@ class AddDriverForm(Form):
 
 class EditDriverForm(Form):
     """A WTForm for editing existing drivers"""
-    seats = IntegerField("Number of seats needed", validators=[
+    seats = IntegerField("Number of seats in vehicle", validators=[
                 validators.DataRequired(),
                 validators.NumberRange(1, 10)
             ])
-    car = SelectField("Preferred type of car", choices=[
+    car = SelectField("Type of car", choices=[
               ('car', 'Car'),
               ('truck', 'Truck'),
               ('van', 'Van'),

@@ -187,6 +187,10 @@ body {
   display:         flex;
 }
 
+.centerh {
+    text-align: center;
+}
+
 /* ---- 
 
 Media Queries

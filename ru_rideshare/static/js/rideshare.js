@@ -40,3 +40,16 @@ function showAddress(address, ind, callback) {
     );
   }
 }
+
+function validateViewForm(formdata) {
+    return false;
+}
+
+function buildRideFromJson(r) {
+    var outer = "<div id='" + r["id"] + "' class='link-info'>";
+    var topr = "<p>" + r["netid"] + " - " + r["time"] + "</p>";
+    var p = "<p>Pickup Location: " + r["paddr"] + "</p>";
+    var d = "<p>Destination Location: " + r["daddr"] + "</p>";
+    var sel = "<input class='req-sel btn btn-default' value='Select This Request'>";
+    return outer + topr + p + d + sel + "</div>";
+}

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, g
 from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_auth import Auth
+import json
 
 # Create application
 app = Flask(__name__)
@@ -123,3 +124,15 @@ def edit_driver():
 @app.route("/view_requests")
 def view_requests():
     return render_template("view_requests.html")
+
+
+@app.route("/get_rides", methods=["POST"])
+def get_rides():
+    res = { "id" : "123", "netid" : "foo", "time" : "12:00", "paddr" : "111" \
+            " joysan", "daddr" : "12 foobar"}
+    return '{"rides" : [%s]}' % (json.dumps(res))
+
+
+@app.route("/requests/<rid>", methods=["POST"])
+def requests(rid=None):
+    return redirect("/")

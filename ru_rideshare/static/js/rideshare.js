@@ -41,8 +41,42 @@ function showAddress(address, ind, callback) {
   }
 }
 
-function validateViewForm(formdata) {
-    return false;
+function validateViewForm(formdata, callback) {
+    if(formdata["pickup"] != "") {
+        if(geocoder) {
+            console.log(formdata);
+            geocoder.geocode(
+                {address : formdata["pickup"]},
+                function(points) {
+                    if(!points) {
+                        alert(address + " not found");
+                        return;
+                    }
+                    platlng = {lat: points[0].geometry.location.lat(), lng: points[0].geometry.location.lng()}
+                    console.log("Got lat long");
+                    formdata["platlng"] = platlng;
+                    delete formdata["pickup"];
+                    if(formdata["dest"] != "") {
+                        geocoder.geocode(
+                            {address: formdata["dest"]},
+                            function(dpoints) {
+                                if(!points) {
+                                    alert(address + " not found");
+                                    return;
+                                }
+                                dlatlng = {lat: dpoints[0].geometry.location.lat(), lng: dpoints[0].geometry.location.lng()}
+                                formdata["dlatlng"] = dlatlng;
+                                delete formdata["dest"];
+                                callback(formdata);
+                            });
+                    } else {
+                        callback(formdata);
+                    }
+                });
+        }
+    } else {
+        callback(formdata);
+    }
 }
 
 function buildRideFromJson(r) {

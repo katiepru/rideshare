@@ -81,7 +81,7 @@ class RideClient(object):
 
 
 
-    def insert_request(self, rnetid, dtime, pickup, dest, seats, car):
+    def insert_request(self, rnetid, dtime, pickup, dest, seats, car, phone):
         """Inserts a new ride request into the database
 
         :Parameters:
@@ -93,13 +93,14 @@ class RideClient(object):
               coordinates of the dropoff location
             - `seats` : the number of seats required
             - `car` : the preferred car type, or None if no preference
+            - `phone` : the phone number of the requester
         """
 
         curs = self._conn.cursor(oursql.DictCursor)
         curs.execute('INSERT INTO `requests` (rnetid, dtime, pickup_lat, ' \
-                     'pickup_long, dest_lat, dest_long, seats, car) VALUES ' \
-                     '(?, ?, ?, ?, ?, ?, ?, ?)', (rnetid, dtime, pickup[0],
-                     pickup[1], dest[0], dest[1], seats, car))
+                     'pickup_long, dest_lat, dest_long, seats, car, phone) VALUES ' \
+                     '(?, ?, ?, ?, ?, ?, ?, ?, ?)', (rnetid, dtime, pickup[0],
+                     pickup[1], dest[0], dest[1], seats, car, phone))
 
 
     def accept_request(self, dnetid, rid):
@@ -113,6 +114,10 @@ class RideClient(object):
         curs = self._conn.cursor(oursql.DictCursor)
         curs.execute('UPDATE `requests` SET driver=? WHERE id=?',
                      (dnetid, rid))
+        curs.execute('SELECT phone, dtime FROM `requests` WHERE id=?', (rid,))
+
+        for i in curs:
+            return (i['phone'], i['dtime'])
 
 
     def cancel_request(self, rid):

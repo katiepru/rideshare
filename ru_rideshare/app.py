@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, g
 from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_auth import Auth
+from twilio.rest import TwilioRestClient
 import json
 
 # Create application
@@ -25,6 +26,11 @@ login_manager.login_view = '/login'
 
 # Allows us to use the function in our templates
 #app.jinja_env.globals.update(formattime=formattime)
+
+# Set up twilio
+twilio_client = TwilioRestClient(app.config['TWILIO_ACCOUNT'],
+    app.config['TWILIO_TOKEN'])
+
 
 
 @login_manager.user_loader
@@ -88,10 +94,12 @@ def request_ride():
         client = get_db_client(app, g)
         if form.car.data == 'None':
             form.car.data = None
+        if form.phone.data == '':
+            form.phone.data = None
         client.insert_request(current_user.id, form.dtime.data,
                 (form.pickup_lat.data, form.pickup_long.data),
                 (form.dest_lat.data, form.dest_long.data), form.seats.data,
-                form.car.data)
+                form.car.data, form.phone.data)
         return render_template("request_ride.html", form=form, msg="Success!")
     else:
         return render_template("request_ride.html", form=form)
@@ -137,6 +145,11 @@ def get_rides():
 @app.route("/requests/<rid>", methods=["POST"])
 def requests(rid=None):
     client = get_db_client(app, g)
-    client.accept_request(current_user.netid, rid);
-    print("Accepted request %s", rid);
+    (phone, dtime) = client.accept_request(current_user.netid, rid);
+    if phone:
+        print("Sending sms")
+        message = twilio_client.messages.create(to=phone,
+            from_=app.config['TWILIO_NUMBER'], body="%s has accepted your " \
+            "request for %s" % (current_user.netid,
+                dtime.strftime("%Y-%m-%d %H:%M")))
     return "{}"

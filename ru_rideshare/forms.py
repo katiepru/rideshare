@@ -30,6 +30,7 @@ class RequestRideForm(Form):
                 validators.DataRequired(),
                 validators.NumberRange(1, 10)
             ])
+    phone = TextField("Phone number")
     car = SelectField("Preferred type of car", choices=[
               ('None', 'No Preference'),
               ('car', 'Car'),

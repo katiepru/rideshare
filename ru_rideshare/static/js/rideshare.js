@@ -2,6 +2,8 @@
 
 var map = null;
 var geocoder = null;
+var directionsDisplay = null;
+var directionsService = new google.maps.DirectionsService();
 markers = [null, null];
 
 function initialize() {
@@ -12,6 +14,8 @@ function initialize() {
         map = new google.maps.Map(document.getElementById('map-canvas'),
                 mapOptions);
     geocoder = new google.maps.Geocoder();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
 }
 
 function showAddress(address, ind, callback) {
@@ -90,13 +94,26 @@ function buildRideFromJson(r, callback) {
                         if(!ppoints) return;
                         daddr = dpoints[0].formatted_address;
                         paddr = ppoints[0].formatted_address;
-                        var outer = "<div id='" + r["id"] + "' class='link-info'>";
+                        var outer = "<div id='" + r["id"] + "' class='req link-info'>";
                         var topr = "<p>" + r["rnetid"] + " - " + r["dtime"] + "</p>";
-                        var p = "<p>Pickup Location: " + paddr + "</p>";
-                        var d = "<p>Destination Location: " + daddr + "</p>";
+                        var p = "<p id='pickuploc'>Pickup Location: " + paddr + "</p>";
+                        var d = "<p id='destloc'>Destination Location: " + daddr + "</p>";
                         var sel = "<input class='req-sel btn btn-default' value='Select This Request'>";
                         callback(outer + topr + p + d + sel + "</div>");
                     });
             });
     }
+}
+
+function calcRoute(start, end) {
+    var request = {
+        origin:start,
+        destination:end,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        }
+    });
 }

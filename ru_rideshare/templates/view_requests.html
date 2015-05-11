@@ -73,6 +73,11 @@ var formdata = {};
                                 $(this).attr('value', 'Confirmed for this ride');
                             }
                         });
+                        $('.req').hover(function() {
+                            var start = $(this).children('#pickuploc').text();
+                            var end = $(this).children('#destloc').text();
+                            calcRoute(start, end);
+                        });
                     });
                 });
 

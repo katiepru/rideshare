@@ -62,7 +62,7 @@ function validateViewForm(formdata, callback) {
                         geocoder.geocode(
                             {address: formdata["dest"]},
                             function(dpoints) {
-                                if(!points) {
+                                if(!dpoints) {
                                     alert(address + " not found");
                                     return;
                                 }
@@ -76,6 +76,19 @@ function validateViewForm(formdata, callback) {
                     }
                 });
         }
+    } else if(formdata["dest"] != "") {
+        geocoder.geocode(
+            {address: formdata["dest"]},
+            function(dpoints) {
+                if(!dpoints) {
+                    alert(address + " not found");
+                    return;
+                }
+                dlatlng = {lat: dpoints[0].geometry.location.lat(), lng: dpoints[0].geometry.location.lng()}
+                formdata["dlat"] = dlatlng["lat"];
+                formdata["dlon"] = dlatlng["lng"];
+                callback(formdata);
+            });
     } else {
         callback(formdata);
     }

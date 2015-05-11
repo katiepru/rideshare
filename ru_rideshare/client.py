@@ -209,13 +209,18 @@ class RideClient(object):
                 else:
                     where = 'harvesine(?, ?, pickup_lat, pickup_long)<?'
                     tup = (a["plat"], a["plon"], a["pmiles"])
-            else:
+            elif a['dest']:
                 where = 'harvesine(?, ?, dest_lat, dest_long)<?'
                 tup = (a["dlat"], a["dlon"], a["dmiles"])
+            else:
+                where = ''
+                tup = ()
 
-
-        curs.execute('SELECT * FROM `requests` WHERE ' + where + ' AND ' \
+        if where:
+            curs.execute('SELECT * FROM `requests` WHERE ' + where + ' AND ' \
                      'driver is NULL', tup)
+        else:
+            curs.execute('SELECT * FROM `requests` WHERE driver is NULL')
 
 
         l = []

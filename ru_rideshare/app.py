@@ -63,9 +63,8 @@ def login_success(user):
 # Views
 
 @app.route("/")
-@login_required
 def index():
-    return str(current_user.driver)
+    return render_template('index.html')
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -84,6 +83,7 @@ def logout():
 
 
 @app.route("/request_ride", methods=["GET", "POST"])
+@login_required
 def request_ride():
     form = RequestRideForm(request.form)
     if request.method == 'POST':
@@ -106,6 +106,7 @@ def request_ride():
 
 
 @app.route("/add_driver", methods=["GET", "POST"])
+@login_required
 def add_driver():
     form = AddDriverForm(request.form)
     if request.method == "POST" and form.validate():
@@ -119,6 +120,7 @@ def add_driver():
 
 
 @app.route("/edit_driver", methods=["GET", "POST"])
+@login_required
 def edit_driver():
     form = EditDriverForm(request.form)
     if request.method == "POST" and form.validate():
@@ -130,11 +132,13 @@ def edit_driver():
 
 
 @app.route("/view_requests")
+@login_required
 def view_requests():
     return render_template("view_requests.html")
 
 
 @app.route("/get_rides", methods=["POST"])
+@login_required
 def get_rides():
     client = get_db_client(app, g)
     res = client.find_requests(request.form)
@@ -143,6 +147,7 @@ def get_rides():
 
 
 @app.route("/requests/<rid>", methods=["POST"])
+@login_required
 def requests(rid=None):
     client = get_db_client(app, g)
     (phone, dtime) = client.accept_request(current_user.netid, rid);

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="links-box col-xs-12 col-sm-8 col-sm-offset-1">
+	{% if errors %}
+	<div class="rideshare-messages">
+		Uh oh:
+		<ul>
+		{% for error in errors %}
+			{% for suberror in errors[error] %}
+				<li> {{ suberror }} </li>
+			{% endfor %}
+		{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	<article class="link-group clearfix">
+        <h3 class="centerh">Welcome to Rutgers Rideshare</h3>
+        {% if current_user.is_anonymous() %}
+            <p class="centerh">Please Log in to Continue</p>
+        {% endif %}
+	</article>
+</div>
+{% endblock %}

@@ -44,7 +44,6 @@ function showAddress(address, ind, callback) {
 function validateViewForm(formdata, callback) {
     if(formdata["pickup"] != "") {
         if(geocoder) {
-            console.log(formdata);
             geocoder.geocode(
                 {address : formdata["pickup"]},
                 function(points) {
@@ -53,9 +52,8 @@ function validateViewForm(formdata, callback) {
                         return;
                     }
                     platlng = {lat: points[0].geometry.location.lat(), lng: points[0].geometry.location.lng()}
-                    console.log("Got lat long");
-                    formdata["platlng"] = platlng;
-                    delete formdata["pickup"];
+                    formdata["plat"] = platlng["lat"];
+                    formdata["plon"] = platlng["lng"];
                     if(formdata["dest"] != "") {
                         geocoder.geocode(
                             {address: formdata["dest"]},
@@ -65,8 +63,8 @@ function validateViewForm(formdata, callback) {
                                     return;
                                 }
                                 dlatlng = {lat: dpoints[0].geometry.location.lat(), lng: dpoints[0].geometry.location.lng()}
-                                formdata["dlatlng"] = dlatlng;
-                                delete formdata["dest"];
+                                formdata["dlat"] = dlatlng["lat"];
+                                formdata["dlon"] = dlatlng["lng"];
                                 callback(formdata);
                             });
                     } else {
@@ -79,11 +77,26 @@ function validateViewForm(formdata, callback) {
     }
 }
 
-function buildRideFromJson(r) {
-    var outer = "<div id='" + r["id"] + "' class='link-info'>";
-    var topr = "<p>" + r["netid"] + " - " + r["time"] + "</p>";
-    var p = "<p>Pickup Location: " + r["paddr"] + "</p>";
-    var d = "<p>Destination Location: " + r["daddr"] + "</p>";
-    var sel = "<input class='req-sel btn btn-default' value='Select This Request'>";
-    return outer + topr + p + d + sel + "</div>";
+function buildRideFromJson(r, callback) {
+    if(geocoder) {
+        geocoder.geocode(
+            { location: {lat: r["dest_lat"], lng: r["dest_long"]} },
+            function(dpoints){
+                if(!dpoints) return;
+                console.log(dpoints);
+                geocoder.geocode(
+                    { location: {lat: r["pickup_lat"], lng: r["pickup_long"]} },
+                    function(ppoints) {
+                        if(!ppoints) return;
+                        daddr = dpoints[0].formatted_address;
+                        paddr = ppoints[0].formatted_address;
+                        var outer = "<div id='" + r["id"] + "' class='link-info'>";
+                        var topr = "<p>" + r["rnetid"] + " - " + r["dtime"] + "</p>";
+                        var p = "<p>Pickup Location: " + paddr + "</p>";
+                        var d = "<p>Destination Location: " + daddr + "</p>";
+                        var sel = "<input class='req-sel btn btn-default' value='Select This Request'>";
+                        callback(outer + topr + p + d + sel + "</div>");
+                    });
+            });
+    }
 }

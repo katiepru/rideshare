@@ -148,56 +148,81 @@ class RideClient(object):
         curs.execute('DELETE FROM `requests` WHERE dtime<?', (now_str,))
 
 
-    def find_requests_in_x_miles(self, lat, lon, x):
-        """Finds all requests within x miles of the given location
+    def find_requests(self, a):
+        """Finds all requests within some amount of miles of the pickup
+        location, some amount of miles of the dropoff location, and some amount
+        of time from a specified time.
 
         :Parameters:
-            - `lat` : latitude coordinate of given location
-            - `lon` : longitude coordinate of given location
-            - `x` : number of miles to search within
+            - `a["plat"]` : latitude coordinate of pickup location
+            - `a["plon"]` : longitude coordinate of pickup location
+            - `a["dlat"]` : latitude coordinate of dest location
+            - `a["dlon"]` : longitude coordinate of dest location
+            - `a["pmiles"]` : number of miles to search within from pickup
+            - `a["dmiles"]` : number of miles to search within from dest
+            - `a["mins"]` : number of minutes from now to search within
+            - `a["time"]` : time to search from
+            - `a["pickup"] : pickup address
+            - `a["dest"] : dest address
         """
-
         curs = self._conn.cursor(oursql.DictCursor)
-        curs.execute('SELECT id FROM `requests` WHERE harvesine(?, ?, ' \
-                           'pickup_lat, pickup_long)<?', (lat, lon, x))
+        where = ""
+        tup = ()
+        if a['time']:
+            if a['pickup']:
+                if a['dest']:
+                    where = 'dtime BETWEEN ' \
+                        '? AND DATE_ADD(?, INTERVAL ? MINUTE) ' \
+                        'AND harvesine(?, ?, pickup_lat, pickup_long)<?' \
+                        ' AND harvesine(?, ?, dest_lat, dest_long)<?'
+                    tup = (a["time"], a["time"], a["mins"], a["plat"],
+                           a["plon"], a["pmiles"], a["dlat"], a["dlon"],
+                           a["dmiles"])
+                else:
+                    where = 'dtime BETWEEN ' \
+                        '? AND DATE_ADD(?, INTERVAL ? MINUTE) ' \
+                        'AND harvesine(?, ?, pickup_lat, pickup_long)<?'
+                    tup = (a["time"], a["time"], a["mins"], a["plat"],
+                           a["plon"], a["pmiles"])
+            elif a['dest']:
+                where = 'dtime BETWEEN ' \
+                    '? AND DATE_ADD(?, INTERVAL ? MINUTE) ' \
+                    'AND harvesine(?, ?, dest_lat, dest_long)<?'
+                tup = (a["time"], a["date"], a["mins"], a["dlat"], a["dlon"],
+                       a["dmiles"])
+            else:
+                where = 'dtime BETWEEN ' \
+                    '? AND DATE_ADD(?, INTERVAL ? MINUTE)'
+                tup = (a["time"], a["time"], a["mins"])
+        else:
+            if a['pickup']:
+                if a['dest']:
+                    where = 'harvesine(?, ?, pickup_lat, pickup_long)<?' \
+                        ' AND harvesine(?, ?, dest_lat, dest_long)<?'
+                    tup = (a["plat"], a["plon"], a["pmiles"], a["dlat"],
+                           a["dlon"], a["dmiles"])
+                else:
+                    where = 'harvesine(?, ?, pickup_lat, pickup_long)<?'
+                    tup = (a["plat"], a["plon"], a["pmiles"])
+            else:
+                where = 'harvesine(?, ?, dest_lat, dest_long)<?'
+                tup = (a["dlat"], a["dlon"], a["dmiles"])
+
+
+        curs.execute('SELECT * FROM `requests` WHERE ' + where, tup)
+
+
         l = []
         for i in curs:
-            l.append(i)
+            fixed = self.request_to_str(i)
+            l.append(fixed)
         return l
 
 
-    def find_requests_in_x_mins(self, x):
-        """Finds all requests with pickup times within x minutes from now.
-
-        :Parameters:
-            - `x` : number of minutes from now to search within
-        """
-
-        curs = self._conn.cursor(oursql.DictCursor)
-        curs.execute('SELECT id FROM `requests` WHERE dtime BETWEEN ' \
-                     'NOW() AND DATE_ADD(NOW(), INTERVAL ? MINUTE)', (x,))
-        l = []
-        for i in curs:
-            l.append(i)
-        return l
-
-
-    def find_requests_in_mins_miles(self, lat, lon, miles, mins):
-        """Finds all requests within x miles of the given location
-
-        :Parameters:
-            - `lat` : latitude coordinate of given location
-            - `lon` : longitude coordinate of given location
-            - `miles` : number of miles to search within
-            - `mins` : number of minutes from now to search within
-        """
-
-        curs = self._conn.cursor(oursql.DictCursor)
-        curs.execute('SELECT id FROM `requests` WHERE dtime BETWEEN ' \
-                     'NOW() AND DATE_ADD(NOW(), INTERVAL ? MINUTE) ' \
-                     'AND harvesine(?, ?, pickup_lat, pickup_long)<?',
-                     (mins, lat, lon, miles))
-        l = []
-        for i in curs:
-            l.append(i)
-        return l
+    def request_to_str(self, res):
+        res['pickup_long'] = float(res['pickup_long'])
+        res['pickup_lat'] = float(res['pickup_lat'])
+        res['dest_long'] = float(res['dest_long'])
+        res['dest_lat'] = float(res['dest_lat'])
+        res['dtime'] = res['dtime'].strftime("%Y-%m-%d %H:%M")
+        return res;

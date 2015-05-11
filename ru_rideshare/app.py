@@ -128,9 +128,10 @@ def view_requests():
 
 @app.route("/get_rides", methods=["POST"])
 def get_rides():
-    res = { "id" : "123", "netid" : "foo", "time" : "12:00", "paddr" : "111" \
-            " joysan", "daddr" : "12 foobar"}
-    return '{"rides" : [%s]}' % (json.dumps(res))
+    client = get_db_client(app, g)
+    res = client.find_requests(request.form)
+    print(res)
+    return '{"rides" : %s}' % (json.dumps(res))
 
 
 @app.route("/requests/<rid>", methods=["POST"])

@@ -209,7 +209,8 @@ class RideClient(object):
                 tup = (a["dlat"], a["dlon"], a["dmiles"])
 
 
-        curs.execute('SELECT * FROM `requests` WHERE ' + where, tup)
+        curs.execute('SELECT * FROM `requests` WHERE ' + where + ' AND ' \
+                     'driver is NULL', tup)
 
 
         l = []

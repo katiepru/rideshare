@@ -136,4 +136,7 @@ def get_rides():
 
 @app.route("/requests/<rid>", methods=["POST"])
 def requests(rid=None):
-    return redirect("/")
+    client = get_db_client(app, g)
+    client.accept_request(current_user.netid, rid);
+    print("Accepted request %s", rid);
+    return "{}"

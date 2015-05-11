@@ -67,12 +67,13 @@ var formdata = {};
                 data["rides"].forEach(function(r) {
                     buildRideFromJson(r, function(elem) {
                         $('#result-list').append(elem);
+                        $('.req-sel').click(function() {
+                            if(confirm('Are you sure?')) {
+                                $.post("requests/" + $(this).parent().attr('id'));
+                                $(this).attr('value', 'Confirmed for this ride');
+                            }
+                        });
                     });
-                });
-                $('.req-sel').click(function() {
-                    if(confirm('Are you sure?')) {
-                        $.post("requests/" + $(this).attr('id'));
-                    }
                 });
 
             });
